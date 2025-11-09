@@ -20,7 +20,8 @@ export default function ReflectionPage() {
       const randomChapter = chapters[Math.floor(Math.random() * chapters.length)];
 
       // 3️⃣ Obtener versículos
-      const verses = await getVerses(randomChapter.id);
+      const [bookId, chapterNumber] = randomChapter.id.split("-");
+      const verses = await getVerses(bookId, Number(chapterNumber));
       const randomVerse = verses[Math.floor(Math.random() * verses.length)];
 
       // 4️⃣ Crear texto reflexivo
