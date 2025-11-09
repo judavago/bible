@@ -15,10 +15,12 @@ export default function VersesPage() {
   useEffect(() => {
     if (!chapterRef) return;
 
-    getVerses(chapterRef)
+    const [bookId, chapterNumber] = chapterRef.split(" ");
+    getVerses(bookId.toLowerCase(), Number(chapterNumber))
       .then((data) => setVerses(data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+
   }, [chapterRef]);
 
   if (!chapterRef) return <p className="p-4">No se ha seleccionado un capítulo.</p>;
