@@ -1,48 +1,39 @@
 // 📁 lib/bibleApi.tsx
-const API_URL = "https://api.scripture.api.bible/v1";
-const API_KEY = "WzjaB-JEZ8K-j6b1j9hpO"; // ✅ Tu API Key
 
 // 📘 Obtener todos los libros
+// Bible API no tiene endpoint de todos los libros, así que usamos un JSON local
+import booksData from "@/data/books.json";
+
 export async function getBooks() {
-  const res = await fetch(`${API_URL}/bibles/de4e12af7f28f599-02/books`, {
-    headers: { "api-key": API_KEY },
-  });
-  if (!res.ok) throw new Error("Error al obtener libros");
-  const data = await res.json();
-  return data.data;
+  // Retorna la lista de libros desde JSON local
+  return booksData;
 }
 
 // 📖 Obtener capítulos de un libro
+// Bible API no soporta endpoint de capítulos por libro
+// Opcional: si quieres, puedes definir capítulos en JSON o mostrar referencia libre
 export async function getChapters(bookId: string) {
-  const res = await fetch(
-    `${API_URL}/bibles/de4e12af7f28f599-02/books/${bookId}/chapters`,
-    { headers: { "api-key": API_KEY } }
-  );
-  if (!res.ok) throw new Error("Error al obtener capítulos");
-  const data = await res.json();
-  return data.data;
+  // Ejemplo: crear un array de capítulos del 1 al 50
+  const chapters = Array.from({ length: 50 }, (_, i) => ({
+    id: `${bookId}-${i + 1}`,
+    reference: `${bookId} ${i + 1}`,
+  }));
+  return chapters;
 }
 
 // 📜 Obtener versículos de un capítulo
-export async function getVerses(chapterId: string) {
-  const res = await fetch(
-    `${API_URL}/bibles/de4e12af7f28f599-02/chapters/${chapterId}/verses`,
-    { headers: { "api-key": API_KEY } }
-  );
+// Usamos Bible API con la referencia completa
+export async function getVerses(chapterReference: string) {
+  const res = await fetch(`https://bible-api.com/${encodeURIComponent(chapterReference)}`);
   if (!res.ok) throw new Error("Error al obtener versículos");
   const data = await res.json();
-  return data.data;
+  return data.verses ?? []; // retorna un array de versículos
 }
 
 // 🔍 Buscar texto en la Biblia
 export async function searchBible(query: string) {
-  const res = await fetch(
-    `${API_URL}/bibles/de4e12af7f28f599-02/search?query=${encodeURIComponent(
-      query
-    )}`,
-    { headers: { "api-key": API_KEY } }
-  );
+  const res = await fetch(`https://bible-api.com/${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error("Error en la búsqueda");
   const data = await res.json();
-  return data.data;
+  return data.verses ?? [];
 }

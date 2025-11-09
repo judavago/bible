@@ -1,28 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getVerses } from "@/lib/bibleApi";
 import { useSearchParams } from "next/navigation";
+import { getVerses } from "@/lib/bibleApi";
 
-interface Props {
-  params: { chapterId: string };
-}
-
-export default function VersesPage({ params }: Props) {
+export default function VersesPage() {
   const searchParams = useSearchParams();
-  const bookId = searchParams.get("bookId") || "";
-  const chapterRef = searchParams.get("chapter") || "";
+  const chapterRef = searchParams.get("ref") || "";
 
   const [verses, setVerses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!chapterRef) {
-      setError("Referencia inválida");
-      setLoading(false);
-      return;
-    }
+    if (!chapterRef) return;
 
     getVerses(chapterRef)
       .then((data) => setVerses(data))
@@ -30,14 +21,13 @@ export default function VersesPage({ params }: Props) {
       .finally(() => setLoading(false));
   }, [chapterRef]);
 
+  if (!chapterRef) return <p className="p-4">No se ha seleccionado un capítulo.</p>;
   if (loading) return <p className="p-4">Cargando versículos...</p>;
   if (error) return <p className="p-4 text-red-500">{error}</p>;
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">
-        Versículos de {chapterRef} ({bookId})
-      </h1>
+      <h1 className="text-xl font-bold mb-4">{chapterRef}</h1>
       <ul className="space-y-2">
         {verses.map((verse) => (
           <li key={verse.verse} className="p-2 bg-gray-100 rounded">

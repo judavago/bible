@@ -30,7 +30,7 @@ export default function ChaptersPage({ params }: Props) {
         {chapters.map((chapter) => (
           <li key={chapter.id}>
             <Link
-              href={`/bible/verse?ref=${encodeURIComponent(chapter.reference)}`}
+              href={`/bible/chapters/${encodeURIComponent(chapter.reference)}`}
               className="block p-3 bg-gray-100 rounded hover:bg-gray-200 transition"
             >
               {chapter.reference}

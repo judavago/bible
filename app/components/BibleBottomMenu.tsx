@@ -25,6 +25,7 @@ export default function BibleBottomMenu() {
     <nav className="fixed bottom-0 left-0 w-full bg-blue-700 text-white shadow-lg flex justify-around items-center py-2 sm:py-3 z-50">
       {menuItems.map((item) => {
         const Icon = item.icon;
+        // resaltar si la ruta empieza con el href (soporta subrutas como /books/[bookId])
         const isActive = pathname.startsWith(item.href);
         return (
           <Link
