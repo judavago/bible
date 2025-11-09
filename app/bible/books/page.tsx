@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getBooks } from "@/lib/bibleApi";
 
 export default function BooksPage() {
   const [books, setBooks] = useState<any[]>([]);
@@ -10,8 +9,12 @@ export default function BooksPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getBooks()
-      .then((data) => setBooks(data))
+    fetch("/api/books")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setBooks(data);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
