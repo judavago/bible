@@ -2,21 +2,26 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getChapters } from "@/lib/bibleApi";
+
+interface Chapter {
+  id: string;
+  reference: string;
+}
 
 interface Props {
   params: { bookId: string };
 }
 
 export default function ChaptersPage({ params }: Props) {
-  const [chapters, setChapters] = useState<any[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getChapters(params.bookId)
+    fetch(`/api/chapters?bookId=${params.bookId}`)
+      .then((res) => res.json())
       .then((data) => setChapters(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(err.error || err.message))
       .finally(() => setLoading(false));
   }, [params.bookId]);
 
@@ -30,7 +35,7 @@ export default function ChaptersPage({ params }: Props) {
         {chapters.map((chapter) => (
           <li key={chapter.id}>
             <Link
-              href={`/bible/verse?ref=${encodeURIComponent(chapter.reference)}`}
+              href={`/bible/chapters/${encodeURIComponent(chapter.reference)}`}
               className="block p-3 bg-gray-100 rounded hover:bg-gray-200 transition"
             >
               {chapter.reference}
