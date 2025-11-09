@@ -69,21 +69,33 @@ export default function RegisterPage() {
     setPassword("");
   };
 
-    useEffect(() => {
-      const checkUser = async () => {
-        const { data } = await supabase.auth.getUser();
+useEffect(() => {
+  const checkUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.getUser();
 
-        if (!data.user) {
-          // ❌ No hay usuario logueado → redirige a login
-          router.push("/user");
-        } else {
-          // ✅ Usuario logueado, seguimos con la página
-          setLoading(false);
-        }
-      };
+      if (error) {
+        console.error("Error al obtener usuario:", error);
+        setLoading(false);
+        return;
+      }
 
-      checkUser();
-    }, [router]);
+      if (data?.user) {
+        // ✅ Si hay sesión activa, redirige solo una vez
+        router.replace("/user");
+      } else {
+        // ✅ Si no hay sesión, muestra el formulario
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Error al verificar sesión:", err);
+      setLoading(false);
+    }
+  };
+
+  checkUser();
+}, [router]);
+
 
     if (loading) return <p className="text-center mt-10">Verificando sesión...</p>;
 
